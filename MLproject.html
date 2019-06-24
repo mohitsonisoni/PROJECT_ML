@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<title>Display Webcam Stream</title>
+ 
+<style>
+#container {
+  margin: 0px auto;
+  width: 500px;
+  height: 375px;
+  border: 10px #333 solid;
+  position: absolute;
+}
+#videoElement1 {
+  width: 500px;
+  height: 375px;
+  background-color: #666;
+  position: absolute;
+}
+#videoElement2 {
+  margin-left: 68%;
+  margin-top: 50%;
+  width: 150px;
+  height: 125px;
+  background-color: #666;
+  position: absolute;
+}
+</style>
+<p><button type="button" onclick="sptotxt()">Click here for play music</button></p>
+<p><button type="button"><a href="C:\\Users\\Mohit Soni\\Desktop\\ADHOC NW\\helloworld.py">Click here for upload a pic on fb</a></button></p>
+</head>
+ 
+<body style="background-color:#00FFFF;">
+
+<div id="container">
+  <video autoplay="true" id="videoElement1">
+  </video>
+
+  <video autoplay="true" id="videoElement2">
+  
+  </video>
+</div>
+<form action="/var/www/cgi-bin/capture.py">
+
+<script>
+var video1 = document.querySelector("#videoElement1");
+var video2 = document.getElementById('videoElement2');
+if (navigator.mediaDevices.getUserMedia) {
+  navigator.mediaDevices.getUserMedia({ video: true})
+    .then(function (stream) {
+      video1.srcObject = stream;
+      send_vid  =  video1.captureStream()
+      video2.srcObject = send_vid;
+
+    })
+    .catch(function (err0r) {
+      console.log("Something went wrong!");
+    });
+}
+  function sptotxt() {
+    // body...
+    window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    let finalTranscript = '';
+    let recognition = new window.SpeechRecognition();
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 10;
+    recognition.continuous = true;
+    recognition.onresult = (event) => {
+      let interimTranscript = '';
+      for (let i = event.resultIndex, len = event.results.length; i < len; i++) {
+        let transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+      document.querySelector('body').innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</>';
+      console.log(finalTranscript);
+    }
+    recognition.start();
+  }
+</script>
+<input type="submit">
+</form>
+<script type="text/javascript" src="javavoic.js"></script>
+</body>
+</html>
